@@ -1,0 +1,35 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Node / Composer
+node_modules/
+vendor/
+
+# IDE / Editor
+*.idea/
+*.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs and temp files
+*.log
+/application/cache/
+/application/logs/
+/application/tmp/
+/uploads/
+
+# System folder (if not needed)
+/system/
+
+# Ignore database config (sensitive)
+application/config/database.php
+
+# Ignore compiled files / temp
+*.swp
+*.bak
+*.tmp
+
+# Ignore environment / local settings
+.env
