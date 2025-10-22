@@ -886,6 +886,7 @@ $lang['due_fee_report'] = "বকেয়া ফি রিপোর্ট";
 $lang['fee_collection_report'] = "ফি সংগ্রহের রিপোর্ট";
 $lang['accounting_balance_report'] = "অ্যাকাউন্টিং ব্যালেন্স রিপোর্ট";
 $lang['donation_report'] = "অনুদান রিপোর্ট";
+$lang['construction_report'] = "নির্মাণ রিপোর্ট";
 $lang['library_report'] = "লাইব্রেরি রিপোর্ট";
 $lang['student_attendance_report'] = "ছাত্র উপস্থিতি রিপোর্ট";
 $lang['student_yearly_attendance_report'] = "ছাত্র  বার্ষিক উপস্থিতি রিপোর্ট";

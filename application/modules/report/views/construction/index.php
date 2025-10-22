@@ -12,53 +12,30 @@
             <?php $this->load->view('quick_report'); ?>   
             
              <div class="x_content filter-box no-print"> 
-                 
-                <?php echo form_open_multipart(site_url('report/transaction'), array('name' => 'transaction', 'id' => 'transaction', 'class' => 'form-horizontal form-label-left'), ''); ?>
+
+                <?php echo form_open_multipart(site_url('report/construction'), array('name' => 'construction', 'id' => 'construction', 'class' => 'form-horizontal form-label-left'), ''); ?>
                 <div class="row">   
                     <?php $this->load->view('layout/school_list_filter'); ?>
                     <div class="col-md-3 col-sm-3 col-xs-12">
                         <div class="item form-group"> 
-                            <?php echo $this->lang->line('academic_year'); ?>
-                            <select  class="select2_mamun form-control col-md-7 col-xs-12" name="academic_year_id" id="academic_year_id">
+                            <?php echo $this->lang->line('academic_year'); ?><span class="required">*</span>
+                            <select  class="select2_mamun form-control col-md-7 col-xs-12" name="academic_year_id" id="academic_year_id" required="required">
                                 <option value="">--<?php echo $this->lang->line('select'); ?>--</option>
                                 <?php foreach ($academic_years as $obj) { ?>
                                 <?php $running = $obj->is_running ? ' ['.$this->lang->line('running_year').']' : ''; ?>
                                 <option value="<?php echo $obj->id; ?>" <?php if(isset($academic_year_id) && $academic_year_id == $obj->id){ echo 'selected="selected"';} ?>><?php echo $obj->session_year; echo $running; ?></option>
                                 <?php } ?>
                             </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
-                        <div class="item form-group"> 
-                            <?php echo $this->lang->line('fund'); ?>
-                            <select  class="select2_mamun form-control col-md-7 col-xs-12" name="fund_id" id="fund_id">
-                                <option value="">--<?php echo $this->lang->line('select'); ?>--</option>
-                                <?php 
-                                $fund_type = get_fund_type();
-                                foreach ($fund_type as $key => $value) { 
-                                ?>
-                                <option value="<?php echo $key; ?>" <?php if(isset($fund_id) && $fund_id == $key){ echo 'selected="selected"';} ?>><?php echo $value;?></option>
-                                <?php } ?>
-                            </select>
+                            <div class="help-block"><?php echo form_error('academic_year_id'); ?></div>
                         </div>
                     </div>
                      <div class="col-md-3 col-sm-3 col-xs-12">
-                        <div class="item form-group"> 
-                            <?php echo $this->lang->line('source'); ?>
-                            <select  class="select2_mamun form-control col-md-7 col-xs-12" name="source">
-                                <option value="">--<?php echo $this->lang->line('select'); ?>--</option>
-                                <option value="expenditure" <?php if(isset($source) &&  $source == 'expenditure'){ echo 'selected="selected"'; } ?>>Expenditure</option>
-                                <option value="transaction" <?php if(isset($source) &&  $source == 'transaction'){ echo 'selected="selected"'; } ?>>Transaction</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
                         <div class="item form-group"> 
                             <?php echo $this->lang->line('from_date'); ?>
                             <input  class="form-control col-md-7 col-xs-12"  name="date_from"  id="date_from" value="<?php echo isset($date_from) && $date_from != '' ?  date('d-m-Y', strtotime($date_from)) : ''; ?>" placeholder="<?php echo $this->lang->line('from_date'); ?>" type="text" autocomplete="off">
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-3 col-xs-12">
+                     <div class="col-md-3 col-sm-3 col-xs-12">
                         <div class="item form-group"> 
                            <?php echo $this->lang->line('to_date'); ?>
                             <input  class="form-control col-md-7 col-xs-12"  name="date_to"  id="date_to" value="<?php echo isset($date_to) && $date_to != '' ?  date('d-m-Y', strtotime($date_to)) : ''; ?>" placeholder="<?php echo $this->lang->line('to_date'); ?>" type="text" autocomplete="off">
@@ -70,6 +47,7 @@
                             <button id="send" type="submit" class="btn btn-success"><?php echo $this->lang->line('find'); ?></button>
                         </div>
                     </div>
+                </div>
                 </div>
                 <?php echo form_close(); ?>
             </div>
@@ -112,53 +90,59 @@
                     <br/>
                     
                     <div class="tab-content">
-                        <div  class="tab-pane fade in active" id="tab_tabular" >
+                        <div  class="tab-pane fade in <?php if(isset($list)){ echo 'active'; }?>" id="tab_donar_list" >
                             <div class="x_content">
-                            <table id="datatable-keytable" class="datatable-responsive table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                            <table class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                                 <thead>
                                     <tr>
                                         <th><?php echo $this->lang->line('sl_no'); ?></th>
-                                        <th><?php echo $this->lang->line('student_id'); ?></th>
-                                        <th><?php echo $this->lang->line('name'); ?></th>
-                                        <th><?php echo $this->lang->line('class'); ?></th>
-                                        <th><?php echo $this->lang->line('invoice_number'); ?></th>
-                                        <th><?php echo $this->lang->line('amount'); ?></th>  
-                                        <th><?php echo $this->lang->line('month'); ?></th>                                      
-                                        <th><?php echo $this->lang->line('source'); ?></th>
+                                        <?php if($this->session->userdata('role_id') == SUPER_ADMIN){ ?>
+                                            <th><?php echo $this->lang->line('school'); ?></th>
+                                        <?php } ?>
+                                        <th><?php echo $this->lang->line('session_year'); ?></th>
+                                        <th><?php echo $this->lang->line('income_head'); ?></th>
+                                        <th><?php echo $this->lang->line('amount'); ?></th>
+                                        <th><?php echo $this->lang->line('date'); ?></th>                                          
                                     </tr>
                                 </thead>
-                                <tbody>   
+                                <tbody>
                                     <?php 
-                                    $total_amount = 0;
-                                    $total_balance = 0;                                  
-                                    
-                                    $count = 1; if(isset($transaction) && !empty($transaction)){ ?>
-                                        <?php foreach($transaction as $obj){ ?>
+                                    $count = 1; 
+                                    $total_amount = 0; 
+
+                                    if (isset($construction_lists) && !empty($construction_lists)) { 
+                                        foreach ($construction_lists as $obj) { 
+                                    ?>                                       
                                         <tr>
                                             <td><?php echo $count++; ?></td>  
-                                            <td><?php echo !empty($obj->school_student_id) ? $obj->school_student_id : 'N/A'; ?></td>
-                                            <td><?php echo !empty($obj->student_name) ? $obj->student_name : 'N/A'; ?></td>
-                                            <td><?php echo !empty($obj->class_name) ? $obj->class_name : 'N/A'; ?></td>
-                                            <td><?php echo !empty($obj->custom_invoice_id) ? $obj->custom_invoice_id : 'N/A'; ?></td>
-                                            <td>
-                                                <?php 
-                                                echo isset($obj->amount) && $obj->amount != '' ? number_format($obj->amount, 2) : 'N/A'; 
-                                                $total_amount += isset($obj->amount) ? $obj->amount : 0;
-                                                ?>
-                                            </td>
-                                            <td>
-                                                <?php echo !empty($obj->month) ? month_format($obj->month) : 'N/A'; ?>
-                                            </td>
-                                            <td><?php echo !empty($obj->source) ? $obj->source : 'N/A'; ?></td>
+                                            <?php if($this->session->userdata('role_id') == SUPER_ADMIN){ ?>
+                                                <td><?php echo $obj->school_name; ?></td>
+                                            <?php } ?>
+                                            <td><?php echo $obj->session_year; ?></td>
+                                            <td><?php echo $obj->head; ?></td>
+                                            <td><?php echo $obj->net_amount; ?></td>
+                                            <td><?php echo date($this->global_setting->date_format, strtotime($obj->date)); ?></td>
                                         </tr>
-
-                                        <?php } ?>
+                                    <?php 
+                                        $total_amount += $obj->net_amount; 
+                                        } 
+                                    ?>
                                         <tr>
-                                            <td colspan="5"><strong><?php echo $this->lang->line('total_amount'); ?></strong></td>
-                                            <td><strong><?php echo number_format($total_amount,2); ?></strong></td>                                           
+                                            <td colspan="5" class="text-right">
+                                                <strong><?php echo $this->lang->line('total_amount'); ?></strong>
+                                            </td>
+                                            <td class="text-right">
+                                                <strong><?php echo number_format($total_amount, 2); ?></strong>
+                                            </td>
                                         </tr>
-                                    <?php }else{ ?>
-                                        <tr><td colspan="7" class="text-center"><?php echo $this->lang->line('no_data_found'); ?></td></tr>
+                                    <?php 
+                                    } else { 
+                                    ?>
+                                        <tr>
+                                            <td colspan="7" class="text-center">
+                                                <?php echo $this->lang->line('no_data_found'); ?>
+                                            </td>
+                                        </tr>
                                     <?php } ?>
                                 </tbody>
                             </table>

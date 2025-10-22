@@ -93,6 +93,61 @@ class Report_Model extends MY_Model {
         return $this->db->get()->result();
     }
 
+    public function get_construction_list($school_id, $academic_year_id, $date_from = null, $date_to = null)
+    {
+        // $this->db->select('D.*, AY.session_year, S.school_name');
+        // $this->db->from('donation_collection AS D');
+        // $this->db->join('schools AS S', 'S.id = D.school_id', 'left');
+        // $this->db->join('academic_years AS AY', 'AY.id = D.academic_year_id', 'left');
+    
+
+        // $this->db->where('D.school_id', $school_id);
+        // $this->db->where('D.academic_year_id', $academic_year_id);
+    
+        // if (!empty($date_from) && !empty($date_to)) {
+        //     $this->db->where('D.donation_date >=', $date_from);
+        //     $this->db->where('D.donation_date <=', $date_to);
+        // } elseif (!empty($date_from)) {
+        //     $this->db->where('D.donation_date', $date_from);
+        // }
+    
+        // if ($this->session->userdata('role_id') != SUPER_ADMIN) {
+        //     $this->db->where('D.school_id', $this->session->userdata('school_id'));
+        // }
+    
+        // $this->db->where('S.status', 1);
+        // $this->db->order_by('D.id', 'DESC');
+    
+        // return $this->db->get()->result();
+
+
+        $this->db->select('I.*, S.school_name, IH.title AS head, AY.session_year');
+        $this->db->from('invoices AS I');        
+        $this->db->join('invoice_detail AS ID', 'ID.invoice_id = I.id', 'left');
+        $this->db->join('income_heads AS IH', 'IH.id = ID.income_head_id', 'left');
+        $this->db->join('academic_years AS AY', 'AY.id = I.academic_year_id', 'left');
+        $this->db->join('schools AS S', 'S.id = I.school_id', 'left');
+        $this->db->where('I.invoice_type', 'income'); 
+        $this->db->where('IH.id', '76'); 
+
+        if (!empty($date_from) && !empty($date_to)) {
+            $this->db->where('I.date >=', $date_from);
+            $this->db->where('I.date <=', $date_to);
+        } elseif (!empty($date_from)) {
+            $this->db->where('I.date', $date_from);
+        }
+
+        if($this->session->userdata('role_id') != SUPER_ADMIN){
+            $this->db->where('I.school_id', $this->session->userdata('school_id'));
+        }
+        if($this->session->userdata('role_id') == SUPER_ADMIN && $school_id){
+            $this->db->where('I.school_id', $school_id);
+        }
+        $this->db->where('S.status', 1);
+         $this->db->order_by('I.id', 'DESC');
+        
+        return $this->db->get()->result(); 
+    }
     
     public function get_expenditure_report($school_id, $academic_year_id, $group_by, $date_from, $date_to){
         
@@ -565,58 +620,92 @@ class Report_Model extends MY_Model {
        
     }    
     
-    // public function get_transaction_report($school_id, $academic_year_id, $fund_id, $source_type = null, $date_from, $date_to){
+    // public function get_transaction_report($school_id, $academic_year_id, $fund_id, $source_type = null, $date_from, $date_to)
+    // {
+    //     // ---------------------------
+    //     // Transaction Query
+    //     // ---------------------------
+    //     $this->db->select("
+    //         T.id, 
+    //         T.payment_method, 
+    //         T.payment_date, 
+    //         IF(IFNULL(I.partial_payment_amount, 0) > 0, I.partial_payment_amount, T.amount) AS amount, 
+    //         T.academic_year_id, 
+    //         AY.session_year, 
+    //         'transaction' AS source
+    //     ", FALSE);
     
-    //     $this->db->select("T.id, T.payment_method, T.payment_date, T.amount, T.academic_year_id, AY.session_year, 'transaction' AS source");
     //     $this->db->from('transactions AS T');   
     //     $this->db->join('invoices AS I', 'I.id = T.invoice_id', 'left');
     //     $this->db->join('invoice_detail AS ID', 'ID.invoice_id = I.id', 'left');
     //     $this->db->join('academic_years AS AY', 'AY.id = T.academic_year_id', 'left');
         
-    //     if($school_id){
+    //     if ($school_id) {
     //         $this->db->where('T.school_id', $school_id);
     //     } 
-    //     if($fund_id){
-    //         if(in_array($fund_id, ['75','76','77'])){
-    //             $this->db->where('ID.income_head_id', $fund_id);
-    //         } elseif($fund_id == 'zakat'){
+    //     if ($fund_id) {
+    //         if (in_array($fund_id, ['75', '76', '77'])) {
+    //             if ($fund_id == '75') {
+    //                 $this->db->where_in('ID.income_head_id', ['773', '74', '75']);
+    //             } else {
+    //                 $this->db->where('ID.income_head_id', $fund_id);
+    //             }
+    //         } elseif ($fund_id == 'zakat') {
     //             $this->db->where('I.month', 'zakat');
     //         }
-    //     } 
-    //     if(!empty($date_from)){
+    //     }
+
+    //     if (!empty($date_from)) {
     //         $this->db->where('T.payment_date >=', $date_from);
     //     }
-    //     if(!empty($date_to)){
+    //     if (!empty($date_to)) {
     //         $this->db->where('T.payment_date <=', $date_to);
     //     }
-    //     if($academic_year_id){
+    //     if ($academic_year_id) {
     //         $this->db->where('T.academic_year_id', $academic_year_id);
     //     }
-
+    
     //     $transaction_query = $this->db->get_compiled_select();
-
-    //     $this->db->select("E.id, E.expenditure_via as payment_method, E.date as payment_date, E.amount, E.academic_year_id, AY.session_year , 'expenditure' AS source");
+    
+    
+    //     // ---------------------------
+    //     // Expenditure Query
+    //     // ---------------------------
+    //     $this->db->select("
+    //         E.id, 
+    //         E.expenditure_via as payment_method, 
+    //         E.date as payment_date, 
+    //         E.amount, 
+    //         E.academic_year_id, 
+    //         AY.session_year, 
+    //         'expenditure' AS source
+    //     ", FALSE);
+    
     //     $this->db->from('expenditures AS E');
     //     $this->db->join('academic_years AS AY', 'AY.id = E.academic_year_id', 'left');
-
-    //     if($school_id){
+    
+    //     if ($school_id) {
     //         $this->db->where('E.school_id', $school_id);
     //     }
-    //     if(in_array($fund_id, ['67','75','76','77'])){
+    //     if (in_array($fund_id, ['67','75','76','77'])) {
     //         $this->db->where('E.income_head_id', $fund_id);
     //     }
-    //     if(!empty($date_from)){
+    //     if (!empty($date_from)) {
     //         $this->db->where('E.date >=', $date_from);
     //     }
-    //     if(!empty($date_to)){
+    //     if (!empty($date_to)) {
     //         $this->db->where('E.date <=', $date_to);
     //     }
-    //     if($academic_year_id){
+    //     if ($academic_year_id) {
     //         $this->db->where('E.academic_year_id', $academic_year_id);
     //     }
-
+    
     //     $expenditure_query = $this->db->get_compiled_select();
-        
+    
+    
+    //     // ---------------------------
+    //     // Final Query
+    //     // ---------------------------
     //     if ($source_type === 'transaction') {
     //         $final_query = "$transaction_query ORDER BY payment_date ASC";
     //     } elseif ($source_type === 'expenditure') {
@@ -624,11 +713,11 @@ class Report_Model extends MY_Model {
     //     } else {
     //         $final_query = "($transaction_query) UNION ALL ($expenditure_query) ORDER BY payment_date ASC";
     //     }
-
+    
     //     $query = $this->db->query($final_query);
     //     return $query->result();
     // }
-    
+
     public function get_transaction_report($school_id, $academic_year_id, $fund_id, $source_type = null, $date_from, $date_to)
     {
         // ---------------------------
@@ -641,24 +730,27 @@ class Report_Model extends MY_Model {
             IF(IFNULL(I.partial_payment_amount, 0) > 0, I.partial_payment_amount, T.amount) AS amount, 
             T.academic_year_id, 
             AY.session_year, 
+            S.name AS student_name,
+            S.school_student_id,
+            I.custom_invoice_id,
+            I.month,
+            C.name AS class_name,
             'transaction' AS source
         ", FALSE);
-    
+
         $this->db->from('transactions AS T');   
         $this->db->join('invoices AS I', 'I.id = T.invoice_id', 'left');
         $this->db->join('invoice_detail AS ID', 'ID.invoice_id = I.id', 'left');
         $this->db->join('academic_years AS AY', 'AY.id = T.academic_year_id', 'left');
-        
+
+        // Join students and related tables
+        $this->db->join('students AS S', 'S.user_id = I.user_id', 'left');
+        $this->db->join('enrollments AS EN', 'EN.student_id = S.id', 'left');
+        $this->db->join('classes AS C', 'C.id = EN.class_id', 'left');
+
         if ($school_id) {
             $this->db->where('T.school_id', $school_id);
         } 
-        // if ($fund_id) {
-        //     if (in_array($fund_id, ['75','76','77'])) {
-        //         $this->db->where('ID.income_head_id', $fund_id);
-        //     } elseif ($fund_id == 'zakat') {
-        //         $this->db->where('I.month', 'zakat');
-        //     }
-        // } 
         if ($fund_id) {
             if (in_array($fund_id, ['75', '76', '77'])) {
                 if ($fund_id == '75') {
@@ -680,10 +772,9 @@ class Report_Model extends MY_Model {
         if ($academic_year_id) {
             $this->db->where('T.academic_year_id', $academic_year_id);
         }
-    
+
         $transaction_query = $this->db->get_compiled_select();
-    
-    
+
         // ---------------------------
         // Expenditure Query
         // ---------------------------
@@ -694,12 +785,17 @@ class Report_Model extends MY_Model {
             E.amount, 
             E.academic_year_id, 
             AY.session_year, 
+            '' AS student_name,
+            '' AS school_student_id,
+            '' AS custom_invoice_id,
+            '' AS month,
+            '' AS class_name,
             'expenditure' AS source
         ", FALSE);
-    
+
         $this->db->from('expenditures AS E');
         $this->db->join('academic_years AS AY', 'AY.id = E.academic_year_id', 'left');
-    
+
         if ($school_id) {
             $this->db->where('E.school_id', $school_id);
         }
@@ -715,10 +811,9 @@ class Report_Model extends MY_Model {
         if ($academic_year_id) {
             $this->db->where('E.academic_year_id', $academic_year_id);
         }
-    
+
         $expenditure_query = $this->db->get_compiled_select();
-    
-    
+
         // ---------------------------
         // Final Query
         // ---------------------------
@@ -729,7 +824,7 @@ class Report_Model extends MY_Model {
         } else {
             $final_query = "($transaction_query) UNION ALL ($expenditure_query) ORDER BY payment_date ASC";
         }
-    
+
         $query = $this->db->query($final_query);
         return $query->result();
     }

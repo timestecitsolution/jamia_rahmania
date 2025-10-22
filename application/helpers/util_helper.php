@@ -79,10 +79,46 @@ if (!function_exists('get_fund_type')) {
         $ci = & get_instance();
         return array(
             '75' => $ci->lang->line('general_fund'),
-            '76' => $ci->lang->line('construction_fund'),
+            // '76' => $ci->lang->line('construction_fund'),
             '77' => $ci->lang->line('boarding_fund'),
-            'zakat' => $ci->lang->line('zakat')
+            // 'zakat' => $ci->lang->line('zakat')
         );
+    }
+}
+
+
+if (!function_exists('month_format')) {
+    /**
+     * Format month values like "08-2025" or ["08-2025","09-2025"]
+     * into readable format: "August 2025, September 2025"
+     * PHP 5.6 compatible
+     */
+    function month_format($month_data)
+    {
+        if (empty($month_data)) {
+            return '';
+        }
+
+        // Detect JSON-style array
+        $trimmed = is_string($month_data) ? trim($month_data) : '';
+        if (is_string($month_data) && substr($trimmed, 0, 1) === '[' && substr($trimmed, -1) === ']') {
+            $month_data = json_decode($month_data, true);
+        }
+
+        // Ensure array
+        if (!is_array($month_data)) {
+            $month_data = array($month_data);
+        }
+
+        $formatted = array();
+        foreach ($month_data as $m) {
+            if (!empty($m)) {
+                // Always format as Month Year (F Y)
+                $formatted[] = date('F Y', strtotime('01-' . $m));
+            }
+        }
+
+        return !empty($formatted) ? implode(', ', $formatted) : '';
     }
 }
 

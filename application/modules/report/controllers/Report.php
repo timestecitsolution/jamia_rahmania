@@ -398,6 +398,47 @@ class Report extends My_Controller {
         $this->layout->view('donation/index', $this->data);
     }
 
+    /*****************Function construction**********************************
+    * @type            : Function
+    * @function name   : construction
+    * @description     : Load construction report user interface                 
+    *                    with various filtering options
+    *                    and process to load construction report   
+    * @param           : null
+    * @return          : null 
+    * ********************************************************** */
+    public function construction() {
+
+        check_permission(VIEW);
+
+        if ($_POST) {
+           
+            $school_id = $this->input->post('school_id');
+            $academic_year_id = $this->input->post('academic_year_id');
+            $date_from = $this->input->post('date_from') ? date('Y-m-d', strtotime($this->input->post('date_from'))) : $this->date_from;
+            $date_to = $this->input->post('date_to') ? date('Y-m-d', strtotime($this->input->post('date_to'))) : $this->date_to;
+                      
+            $this->data['school_id'] = $school_id;
+            $this->data['academic_year_id'] = $academic_year_id;
+            $this->data['date_from'] = $date_from;
+            $this->data['date_to'] = $date_to;     
+            
+            $this->data['school'] = $this->report->get_school_by_id($school_id);
+            if($academic_year_id){
+                $this->data['academic_year'] = $this->db->get_where('academic_years', array('id'=>$academic_year_id, 'school_id'=>$school_id))->row()->session_year;
+            }
+
+            $this->data['construction_lists'] = $this->report->get_construction_list($school_id, $academic_year_id, $date_from, $date_to);
+            
+        }
+        
+        $this->data['schools'] = $this->schools;
+        $this->data['list'] = TRUE;
+        
+        $this->data['report_url'] = site_url('report/construction');
+        $this->layout->title($this->lang->line('construction_report') . ' | ' . SMS);
+        $this->layout->view('construction/index', $this->data);
+    }
 
     /*****************Function _get_daily_balance_data**********************************
     * @type            : Function
@@ -1134,7 +1175,7 @@ class Report extends My_Controller {
             }
             
             $this->data['transaction'] = $this->report->get_transaction_report($school_id, $academic_year_id, $fund_id, $source, $date_from, $date_to);
-            
+            //dump_data($this->data['transaction']);
         }
         
         $this->data['report_url'] = site_url('report/transaction');

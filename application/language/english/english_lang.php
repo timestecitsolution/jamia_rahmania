@@ -890,6 +890,7 @@ $lang['due_fee_report'] = "Due Fee Report";
 $lang['fee_collection_report'] = "Fee Collection Report";
 $lang['accounting_balance_report'] = "Accounting Balance Report";
 $lang['donation_report'] = "Donation Report";
+$lang['construction_report'] = "Construction Report";
 $lang['library_report'] = "Library Report";
 $lang['student_attendance_report'] = "Student Attendance Report";
 $lang['student_yearly_attendance_report'] = "Student Yearly Attendance Report";
