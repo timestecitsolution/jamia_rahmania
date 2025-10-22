@@ -274,7 +274,7 @@ class Income extends MY_Controller {
      *                       
      * @param           : null
      * @return          : $data array(); value 
-     * **********************************************************  */
+     * ********************************************************** */
     private function _get_posted_income_data() {
      
         $data = array();
