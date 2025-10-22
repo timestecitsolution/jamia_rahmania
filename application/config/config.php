@@ -432,7 +432,7 @@ $config['cookie_httponly'] 	= FALSE;
 | meaning to replace \r\n, \r, \n occurrences with the PHP_EOL value.
 |
 | WARNING: This feature is DEPRECATED and currently available only
-|          for backwards compatibility purposes!
+|          for backwards compatibility purposes !
 |
 */
 $config['standardize_newlines'] = FALSE;
