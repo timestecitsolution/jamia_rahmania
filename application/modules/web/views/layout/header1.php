@@ -81,10 +81,8 @@
                                     <li><a class="dropdown-item" href="web/application_form">ভর্তি ফর্ম</a></li>
                                 </ul>
                             </li>
-                            <!-- <li class="nav-item"><a class="nav-link"
-                                    href="https://darulquranmadrasa.com/madrasha/auth/login">লগইন</a></li> -->
                             <li class="nav-item"><a class="nav-link"
-                                    href="http://localhost:8082/auth/login">লগইন</a></li>
+                                    href="<?php echo base_url('auth/login'); ?>">লগইন</a></li>
                             <li class="nav-item"><a class="nav-link" href="web/contact">যোগাযোগ</a></li>
                         </ul>
                         <div class="nav-right">

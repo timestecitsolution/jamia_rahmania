@@ -25,7 +25,7 @@ vendor/
 
 # Ignore database config (sensitive)
 application/config/database.php
-
+application/config/config.php
 # Ignore compiled files / temp
 *.swp
 *.bak

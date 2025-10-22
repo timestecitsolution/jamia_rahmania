@@ -74,11 +74,11 @@
 
             $db['default'] = array(
                     'dsn'	=> '',
-                    'hostname' => 'localhost',                        
+                    'hostname' => 'db',                        
                     'dbdriver' => 'mysqli',
                     'dbprefix' => '',
                     'pconnect' => FALSE,
-                    'db_debug' => (ENVIRONMENT !== 'production'),
+                    'db_debug' => (ENVIRONMENT !== 'development'),
                     'cache_on' => FALSE,
                     'cachedir' => '',
                     'char_set' => 'utf8',
@@ -90,9 +90,9 @@
                     'failover' => array(),
                     'save_queries' => TRUE
             );
-            $db['default']['hostname'] = 'localhost';
-            $db['default']['username'] = 'jamiarahmaniabog_madrasha';
-            $db['default']['password'] = 'Fu.am)Pe}h6x';
+            $db['default']['hostname'] = 'db';
+            $db['default']['username'] = 'root';
+            $db['default']['password'] = 'root';
             $db['default']['database'] = 'jamiarahmaniabog_madrasha';
             
             /*$db['default']['username'] = 'mhacademybd_main';
